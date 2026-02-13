@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AppTextFeild extends StatefulWidget {
-  AppTextFeild({
+  const AppTextFeild({
     super.key,
     required this.controller,
     this.titlelabale,

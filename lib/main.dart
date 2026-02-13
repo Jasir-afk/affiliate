@@ -1,4 +1,4 @@
-import 'package:care_mall_affiliate/src/modules/auth/login.dart';
+import 'package:care_mall_affiliate/src/modules/auth/view/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

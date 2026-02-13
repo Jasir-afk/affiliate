@@ -1,9 +1,11 @@
 import 'package:care_mall_affiliate/app/app_buttons/app_buttons.dart';
 import 'package:care_mall_affiliate/app/commenwidget/apptext.dart';
 import 'package:care_mall_affiliate/app/theme_data/app_colors.dart';
+import 'package:care_mall_affiliate/app/utils/network/auth_service.dart';
 import 'package:care_mall_affiliate/app/utils/spaces.dart';
 import 'package:care_mall_affiliate/gen/assets.gen.dart';
-import 'package:care_mall_affiliate/src/modules/auth/register_screen.dart';
+import 'package:care_mall_affiliate/src/modules/auth/view/otp_verification_screen.dart';
+import 'package:care_mall_affiliate/src/modules/auth/view/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // );
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  // final AuthController _authController = Get.put(AuthController());
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -35,9 +37,61 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      // _authController.requestLoginOtp(_phoneController.text, "login", "", "");
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final result = await AuthService.sendOtp(
+          phone: _phoneController.text,
+          mode: 'login',
+        );
+
+        if (mounted) {
+          if (result['success']) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result['message']),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Navigate to OTP verification screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => OTPVerificationScreen(
+                  phoneNumber: _phoneController.text,
+                  mode: 'login',
+                ),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result['message']),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -152,6 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         defaultSpacer,
                         AppButton(
+                          isLoading: _isLoading,
                           child: AppText(
                             text: "Send OTP",
                             fontSize: 16,

@@ -3,6 +3,7 @@ import 'package:care_mall_affiliate/app/commenwidget/apptext.dart';
 import 'package:care_mall_affiliate/app/theme_data/app_colors.dart';
 import 'package:care_mall_affiliate/app/utils/network/auth_service.dart';
 import 'package:care_mall_affiliate/app/utils/spaces.dart';
+import 'package:care_mall_affiliate/src/modules/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -80,8 +81,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          // TODO: Navigate to home/dashboard screen after successful verification
-          // Navigator.pushReplacementNamed(context, '/home');
+          // Navigate to home screen after successful verification
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            (route) => false, // Remove all previous routes
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

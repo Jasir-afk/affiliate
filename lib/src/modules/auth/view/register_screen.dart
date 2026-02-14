@@ -1,9 +1,13 @@
+import 'package:care_mall_affiliate/app/app_buttons/app_buttons.dart';
 import 'package:care_mall_affiliate/app/commenwidget/apptext.dart';
 import 'package:care_mall_affiliate/app/theme_data/app_colors.dart';
+import 'package:care_mall_affiliate/app/utils/network/auth_service.dart';
 import 'package:care_mall_affiliate/app/utils/spaces.dart';
 import 'package:care_mall_affiliate/gen/assets.gen.dart';
-import 'package:care_mall_affiliate/src/modules/auth/login.dart';
+import 'package:care_mall_affiliate/src/modules/auth/view/login.dart';
+import 'package:care_mall_affiliate/src/modules/auth/view/otp_verification_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -35,23 +39,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
       try {
-        // TODO: Implement your signup logic here
-        // Example: await authService.requestLoginOtp(_phoneCtrl.text, "signup", _nameCtrl.text, _emailCtrl.text);
-
-        // Simulated delay
-        await Future.delayed(const Duration(seconds: 2));
+        final result = await AuthService.sendOtp(
+          phone: _phoneCtrl.text,
+          mode: 'signup',
+          name: _nameCtrl.text,
+          email: _emailCtrl.text,
+        );
 
         if (mounted) {
-          // Show success message or navigate to next screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('OTP sent successfully!')),
-          );
+          if (result['success']) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result['message']),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Navigate to OTP verification screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => OTPVerificationScreen(
+                  phoneNumber: _phoneCtrl.text,
+                  mode: 'signup',
+                  name: _nameCtrl.text,
+                  email: _emailCtrl.text,
+                ),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result['message']),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Error: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       } finally {
         if (mounted) {
@@ -67,7 +98,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -291,20 +331,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 defaultSpacer24,
 
                 // Sign Up Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _signup,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            'Sign Up',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                AppButton(
+                  isLoading: _isLoading,
+                  child: AppText(
+                    text: "Sign Up",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.whitecolor,
                   ),
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    if (_formKey.currentState?.validate() ?? false) {
+                      _signup();
+                    }
+                  },
                 ),
                 defaultSpacer,
                 defaultSpacer24,

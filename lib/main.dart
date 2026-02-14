@@ -1,4 +1,4 @@
-import 'package:care_mall_affiliate/src/modules/auth/login.dart';
+import 'package:care_mall_affiliate/src/modules/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,9 +18,10 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          color: Colors.white,
           title: 'Care Mall Affiliate',
           theme: ThemeData(useMaterial3: true),
-          home: const LoginScreen(),
+          home: const SplashScreen(),
         );
       },
     );

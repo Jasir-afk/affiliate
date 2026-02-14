@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:care_mall_affiliate/app/app_buttons/app_buttons.dart';
 import 'package:care_mall_affiliate/app/commenwidget/apptext.dart';
 import 'package:care_mall_affiliate/app/theme_data/app_colors.dart';
 import 'package:care_mall_affiliate/app/utils/network/auth_service.dart';
 import 'package:care_mall_affiliate/app/utils/spaces.dart';
-import 'package:care_mall_affiliate/src/modules/home_screen/home_screen.dart';
+import 'package:care_mall_affiliate/gen/assets.gen.dart';
+import 'package:care_mall_affiliate/src/modules/home_screen/view/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,9 +36,33 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final List<FocusNode> _otpFocusNodes = List.generate(6, (_) => FocusNode());
   bool _isLoading = false;
   bool _isResending = false;
+  Timer? _timer;
+  int _start = 30;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(oneSec, (Timer timer) {
+      if (_start == 0) {
+        setState(() {
+          timer.cancel();
+        });
+      } else {
+        setState(() {
+          _start--;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _timer?.cancel();
     for (var controller in _otpControllers) {
       controller.dispose();
     }
@@ -81,10 +107,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          // Navigate to home screen after successful verification
+          // Navigate to KYC details screen after successful verification
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            MaterialPageRoute(builder: (_) => HomeScreen()),
             (route) => false, // Remove all previous routes
           );
         } else {
@@ -134,6 +160,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             backgroundColor: result['success'] ? Colors.green : Colors.red,
           ),
         );
+        if (result['success']) {
+          setState(() {
+            _start = 30;
+          });
+          startTimer();
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -160,7 +192,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -169,153 +203,207 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              defaultSpacerLarge,
-
-              // Title
-              AppText(
-                text: 'Enter OTP',
-                fontSize: 32.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textnaturalcolor,
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight:
+                    MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom -
+                    kToolbarHeight -
+                    (defaultPadding * 2),
               ),
-              defaultSpacerSmall,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // CareMall Logo
+                  SizedBox(
+                    width: 150.w,
+                    height: 35.h,
+                    child: Assets.icons.appLogoPng.image(fit: BoxFit.fitHeight),
+                  ),
+                  defaultSpacerLarge,
 
-              // Subtitle with phone number
-              AppText(
-                text: 'A 6-digit code was sent to ${widget.phoneNumber}',
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textDefaultSecondarycolor,
-              ),
-              defaultSpacerLarge,
-              defaultSpacerLarge,
+                  // Title
+                  AppText(
+                    text: 'Enter OTP',
+                    fontSize: 32.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textnaturalcolor,
+                  ),
+                  defaultSpacerSmall,
 
-              // OTP Input Fields
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
-                  return SizedBox(
-                    width: 50.w,
-                    height: 60.h,
-                    child: TextFormField(
-                      controller: _otpControllers[index],
-                      focusNode: _otpFocusNodes[index],
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      maxLength: 1,
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      decoration: InputDecoration(
-                        counterText: '',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
+                  // Subtitle with phone number
+                  AppText(
+                    text: 'A 6-digit code was sent to ${widget.phoneNumber}',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textDefaultSecondarycolor,
+                  ),
+                  defaultSpacerLarge,
+
+                  // OTP Input Fields
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(6, (index) {
+                      return SizedBox(
+                        width: 50.w,
+                        height: 60.h,
+                        child: TextFormField(
+                          controller: _otpControllers[index],
+                          focusNode: _otpFocusNodes[index],
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration(
+                            counterText: '',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1.5,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1.5,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: const BorderSide(
+                                color: AppColors.primarycolor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(
+                              6,
+                            ), // Allow up to 6 digits for paste
+                          ],
+                          onChanged: (value) {
+                            // Handle paste - if multiple digits are pasted
+                            if (value.length > 1) {
+                              // Clear current field first
+                              _otpControllers[index].text = '';
+
+                              // Distribute the pasted digits across all fields starting from current index
+                              final digits = value.split('');
+                              for (
+                                int i = 0;
+                                i < digits.length && (index + i) < 6;
+                                i++
+                              ) {
+                                _otpControllers[index + i].text = digits[i];
+                              }
+
+                              // Hide keyboard after paste
+                              FocusScope.of(context).unfocus();
+
+                              setState(() {});
+                              return;
+                            }
+
+                            // Handle single character input
+                            if (value.length == 1) {
+                              if (index < 5) {
+                                // Move to next field
+                                _otpFocusNodes[index + 1].requestFocus();
+                              }
+                            } else if (value.isEmpty && index > 0) {
+                              // Move to previous field on backspace
+                              _otpFocusNodes[index - 1].requestFocus();
+                            }
+                            setState(() {});
+                          },
+                        ),
+                      );
+                    }),
+                  ),
+                  defaultSpacerLarge,
+                  // Resend OTP
+                  Center(
+                    child: _isResending
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : _start > 0
+                        ? AppText(
+                            text: 'Resend OTP in $_start s',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
                             color: Colors.grey,
-                            width: 1.5,
+                          )
+                        : TextButton(
+                            onPressed: _resendOTP,
+                            child: AppText(
+                              text: 'Resend OTP',
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.red,
+                            ),
+                          ),
+                  ),
+                  defaultSpacer,
+
+                  // Verify Button
+                  AppButton(
+                    isLoading: _isLoading,
+                    child: AppText(
+                      text: "Verify OTP",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.whitecolor,
+                    ),
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                      _verifyOTP();
+                    },
+                  ),
+                  defaultSpacer,
+
+                  // Edit Number
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AppText(
+                          text: 'Wrong number? ',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textDefaultSecondarycolor,
+                        ),
+                        TextButton(
+                          onPressed: _editNumber,
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: AppText(
+                            text: 'Edit number',
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
                           ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.5,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.primarycolor,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      onChanged: (value) {
-                        if (value.isNotEmpty && index < 5) {
-                          // Move to next field
-                          _otpFocusNodes[index + 1].requestFocus();
-                        } else if (value.isEmpty && index > 0) {
-                          // Move to previous field on backspace
-                          _otpFocusNodes[index - 1].requestFocus();
-                        }
-                        setState(() {});
-                      },
+                      ],
                     ),
-                  );
-                }),
+                  ),
+                ],
               ),
-              defaultSpacerLarge,
-
-              // Resend OTP
-              Center(
-                child: _isResending
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : TextButton(
-                        onPressed: _resendOTP,
-                        child: AppText(
-                          text: 'Resend OTP',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red,
-                        ),
-                      ),
-              ),
-              defaultSpacerLarge,
-
-              // Verify Button
-              AppButton(
-                isLoading: _isLoading,
-                child: AppText(
-                  text: "Verify OTP",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.whitecolor,
-                ),
-                onPressed: () {
-                  HapticFeedback.selectionClick();
-                  _verifyOTP();
-                },
-              ),
-              defaultSpacerLarge,
-
-              // Edit Number
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AppText(
-                      text: 'Wrong number? ',
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textDefaultSecondarycolor,
-                    ),
-                    TextButton(
-                      onPressed: _editNumber,
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: AppText(
-                        text: 'Edit number',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

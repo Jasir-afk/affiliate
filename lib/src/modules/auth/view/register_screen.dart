@@ -4,7 +4,7 @@ import 'package:care_mall_affiliate/app/theme_data/app_colors.dart';
 import 'package:care_mall_affiliate/app/utils/network/auth_service.dart';
 import 'package:care_mall_affiliate/app/utils/spaces.dart';
 import 'package:care_mall_affiliate/gen/assets.gen.dart';
-import 'package:care_mall_affiliate/src/modules/auth/view/login.dart';
+import 'package:care_mall_affiliate/src/modules/auth/view/login_screen.dart';
 import 'package:care_mall_affiliate/src/modules/auth/view/otp_verification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -119,24 +119,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 170,
-                      height: 40,
-                      child: Assets.icons.appLogoPng.image(
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                    AppText(
-                      text: 'Join the Care Mall Affiliate Program',
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textnaturalcolor,
-                    ),
-                  ],
+                // Logo and Description
+                SizedBox(
+                  width: 170,
+                  height: 40,
+                  child: Assets.icons.appLogoPng.image(fit: BoxFit.fitHeight),
+                ),
+                defaultSpacerSmall,
+                AppText(
+                  text: 'Join the Care Mall Affiliate Program',
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textnaturalcolor,
                 ),
                 defaultSpacerLarge,
 
@@ -165,28 +159,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 defaultSpacerSmall,
                 TextFormField(
                   controller: _nameCtrl,
+                  style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     hintText: 'Enter Name here',
+                    hintStyle: const TextStyle(color: Colors.grey),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Assets.icons.user.svg(),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                     ),
 
                     // 👇 When Enabled
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: Colors.grey[300]!,
                         width: 1.5,
                       ),
                     ),
 
                     // 👇 When Focused
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(
                         color: AppColors
                             .primarycolor, // change to your theme color
@@ -196,7 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     // 👇 When Error
                     errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(
                         color: Colors.red,
                         width: 1.5,
@@ -204,7 +200,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
 
                     focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(color: Colors.red, width: 2),
                     ),
                   ),
@@ -226,28 +222,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 defaultSpacerSmall,
                 TextFormField(
                   controller: _emailCtrl,
+                  style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     hintText: 'Enter Email here',
+                    hintStyle: const TextStyle(color: Colors.grey),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(14.0),
                       child: Assets.icons.mail.svg(),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                     ),
 
                     // 👇 When Enabled
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: Colors.grey[300]!,
                         width: 1.5,
                       ),
                     ),
 
                     // 👇 When Focused
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(
                         color: AppColors
                             .primarycolor, // change to your theme color
@@ -257,7 +255,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     // 👇 When Error
                     errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(
                         color: Colors.red,
                         width: 1.5,
@@ -265,7 +263,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
 
                     focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(color: Colors.red, width: 2),
                     ),
                   ),
@@ -295,20 +293,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
+                  style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     counterText: '',
                     hintText: 'Enter Phone Number here',
+                    hintStyle: const TextStyle(color: Colors.grey),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(14.0),
                       child: Assets.icons.phone.svg(),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: Colors.grey[300]!,
+                        width: 1.5,
+                      ),
+                    ),
+
+                    // 👇 When Enabled
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: Colors.grey[300]!,
+                        width: 1.5,
+                      ),
                     ),
 
                     // 👇 When Focused
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       borderSide: const BorderSide(
                         color: AppColors.primarycolor,
                         width: 2,
@@ -347,7 +360,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                 ),
                 defaultSpacer,
-                defaultSpacer24,
 
                 // Social Buttons
                 //lready have an account text

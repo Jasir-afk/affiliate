@@ -1,4 +1,4 @@
-import 'package:care_mall_affiliate/src/modules/splash/splash_screen.dart';
+import 'package:care_mall_affiliate/src/modules/intilise_screen/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

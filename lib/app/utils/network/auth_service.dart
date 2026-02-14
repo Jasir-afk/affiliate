@@ -77,6 +77,7 @@ class AuthService {
           'success': true,
           'message': responseData['message'] ?? 'OTP verified successfully!',
           'data': responseData,
+          'token': responseData['token'] ?? responseData['data']?['token'],
         };
       } else {
         return {

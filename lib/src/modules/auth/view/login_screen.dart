@@ -113,31 +113,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 170,
-                              height: 40,
-                              child: Assets.icons.appLogoPng.image(
-                                fit: BoxFit.fitHeight,
-                              ),
-                            ),
-                            AppText(
-                              text: 'Join the Care Mall Affiliate Program',
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textnaturalcolor,
-                            ),
-                            AppText(
-                              text:
-                                  'Partner with us to promote top-quality products and earn competitive commissions.',
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.textDefaultSecondarycolor,
-                            ),
-                          ],
+                        // Logo and Description
+                        SizedBox(
+                          width: 170,
+                          height: 40,
+                          child: Assets.icons.appLogoPng.image(
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                        defaultSpacerSmall,
+                        AppText(
+                          text: 'Join the Care Mall Affiliate Program',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textnaturalcolor,
+                        ),
+                        defaultSpacerSmall,
+                        AppText(
+                          text:
+                              'Partner with us to promote top-quality products and earn competitive commissions.',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textDefaultSecondarycolor,
                         ),
 
                         defaultSpacerLarge,
@@ -173,21 +170,36 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.phone,
                           maxLength: 10,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             counterText: '',
                             hintText: 'Enter Mobile Number here',
+                            hintStyle: const TextStyle(color: Colors.grey),
                             prefixIcon: Padding(
                               padding: const EdgeInsets.all(14.0),
                               child: Assets.icons.phone.svg(),
                             ),
                             // 👇 Default Border
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1.5,
+                              ),
+                            ),
+
+                            // 👇 When Enabled
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1.5,
+                              ),
                             ),
 
                             // 👇 When Focused
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(5),
                               borderSide: const BorderSide(
                                 color: AppColors.primarycolor,
                                 width: 2,
@@ -210,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           isLoading: _isLoading,
                           child: AppText(
                             text: "Send OTP",
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.whitecolor,
                           ),

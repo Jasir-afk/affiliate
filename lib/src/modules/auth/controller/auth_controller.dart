@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:care_mall_affiliate/src/modules/auth/repo/auth_repo.dart';
+import 'package:care_mall_affiliate/src/modules/auth/controller/auth_repo.dart';
 
 /// Authentication Controller using GetX for state management
 /// Handles all authentication-related business logic

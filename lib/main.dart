@@ -1,6 +1,15 @@
+import 'package:care_mall_affiliate/src/modules/intilise_screen/view/splash_screen.dart';
+import 'package:care_mall_affiliate/src/core/services/storage_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize persistent storage
+  await StorageService.init();
+
   runApp(const MyApp());
 }
 
@@ -9,6 +18,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return ScreenUtilInit(
+      designSize: const Size(375, 812), // Standard mobile design size
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          color: Colors.white,
+          title: 'Care Mall Affiliate',
+          theme: ThemeData(useMaterial3: true),
+          home: const SplashScreen(),
+        );
+      },
+    );
   }
 }

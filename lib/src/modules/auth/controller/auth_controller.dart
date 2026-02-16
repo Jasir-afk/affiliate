@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:care_mall_affiliate/src/modules/auth/controller/auth_repo.dart';
+import 'package:care_mall_affiliate/src/core/services/storage_service.dart';
 
 /// Authentication Controller using GetX for state management
 /// Handles all authentication-related business logic
@@ -14,6 +15,26 @@ class AuthController extends GetxController {
   final userName = ''.obs;
   final userEmail = ''.obs;
   final authToken = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Restore authentication state from persistent storage on startup
+    _restoreAuthState();
+  }
+
+  /// Restore authentication state from SharedPreferences
+  Future<void> _restoreAuthState() async {
+    final savedToken = await StorageService.getAuthToken();
+    final savedPhone = await StorageService.getPhoneNumber();
+    final savedName = await StorageService.getUserName();
+    final savedEmail = await StorageService.getUserEmail();
+
+    if (savedToken != null) authToken.value = savedToken;
+    if (savedPhone != null) phoneNumber.value = savedPhone;
+    if (savedName != null) userName.value = savedName;
+    if (savedEmail != null) userEmail.value = savedEmail;
+  }
 
   /// Sends OTP for login
   ///
@@ -148,7 +169,9 @@ class AuthController extends GetxController {
         // Save authentication token if provided
         if (result['token'] != null) {
           authToken.value = result['token'];
-          // TODO: Save token to persistent storage (SharedPreferences)
+          // Save token to persistent storage
+          await StorageService.saveAuthToken(result['token']);
+          await StorageService.savePhoneNumber(phone);
         }
 
         Get.snackbar(
@@ -238,13 +261,19 @@ class AuthController extends GetxController {
   }
 
   /// Clears all authentication data
-  void logout() {
+  Future<void> logout() async {
     phoneNumber.value = '';
     userName.value = '';
     userEmail.value = '';
     authToken.value = '';
     isLoading.value = false;
     isResendingOtp.value = false;
-    // TODO: Clear persistent storage
+    // Clear persistent storage
+    await StorageService.clearAuthData();
+  }
+
+  /// Check if user is currently logged in
+  Future<bool> isLoggedIn() async {
+    return await StorageService.isLoggedIn();
   }
 }

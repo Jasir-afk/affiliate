@@ -1,8 +1,15 @@
 import 'package:care_mall_affiliate/src/modules/intilise_screen/view/splash_screen.dart';
+import 'package:care_mall_affiliate/src/core/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize persistent storage
+  await StorageService.init();
+
   runApp(const MyApp());
 }
 

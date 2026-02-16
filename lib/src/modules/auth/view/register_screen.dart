@@ -361,8 +361,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 defaultSpacer,
 
-                // Social Buttons
-                //lready have an account text
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
